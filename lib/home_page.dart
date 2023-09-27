@@ -12,16 +12,15 @@ class UserHome extends StatefulWidget {
 }
 
 class _UserHomeState extends State<UserHome> {
-  final FlutterTts flutterTts= FlutterTts();
+  final FlutterTts flutterTts = FlutterTts();
   final TextEditingController _controller = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   FocusNode focusNode = FocusNode();
   String _selectedFromLanguage = 'French';
   String _selectedToLanguage = 'Arabic';
-  bool isTransalated=false;
+  bool isTransalated = false;
   late speachToText.SpeechToText _speech;
   bool _isListening = false;
-
 
   @override
   void initState() {
@@ -30,12 +29,14 @@ class _UserHomeState extends State<UserHome> {
 
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:
-      Center(
-        child: Column(
+      appBar:AppBar(),
+      body: SingleChildScrollView(
+        child:
+        Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -88,24 +89,15 @@ class _UserHomeState extends State<UserHome> {
                             color: Colors.blue[700],
                           ),
                           onPressed: () {
-
                             print("Current Locale");
                             print(context.locale.languageCode.toString());
-                            print(context.locale.languageCode=="ar");
+                            print(context.locale.languageCode == "ar");
 
-                            if(context.locale.languageCode=="ar")
-                            {
+                            if (context.locale.languageCode == "ar") {
                               context.setLocale(const Locale('fr'));
-
+                            } else {
+                              context.setLocale(const Locale('ar'));
                             }
-                            else
-                            {
-                                 context.setLocale(const Locale('ar'));
-
-                            }
-
-
-
                           },
                         ),
                         DropdownButton(
@@ -139,8 +131,10 @@ class _UserHomeState extends State<UserHome> {
                           children: [
                             Expanded(
                               child: Container(
-                                height: MediaQuery.of(context).size.height / 6.5,
-                                margin: const EdgeInsets.symmetric(horizontal: 10),
+                                height:
+                                    MediaQuery.of(context).size.height / 6.5,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 10),
                                 child: TextFormField(
                                   style: const TextStyle(fontSize: 28),
                                   controller: _controller,
@@ -165,8 +159,7 @@ class _UserHomeState extends State<UserHome> {
                                             color: Colors.grey[600],
                                           ),
                                           onPressed: () {
-                                            _controller.text="";
-
+                                            _controller.text = "";
                                           },
                                         ),
                                         IconButton(
@@ -175,19 +168,21 @@ class _UserHomeState extends State<UserHome> {
                                             color: Colors.grey[600],
                                           ),
                                           onPressed: () async {
-                                            if(context.locale.languageCode=="ar")
-                                            {
-                                              String val = _controller.text.toString();
-                                              speakInputArabicWord(val,flutterTts);
+                                            if (context.locale.languageCode ==
+                                                "ar") {
+                                              String val =
+                                                  _controller.text.toString();
+                                              speakInputArabicWord(
+                                                  val, flutterTts);
+                                            } else if (context
+                                                    .locale.languageCode ==
+                                                "fr") {
+                                              String val2 =
+                                                  _controller.text.toString();
 
+                                              speakInputFrenchWord(
+                                                  val2, flutterTts);
                                             }
-                                            else if(context.locale.languageCode=="fr")
-                                            {
-                                              String val2 = _controller.text.toString();
-
-                                              speakInputFrenchWord(val2, flutterTts);
-                                            }
-
                                           },
                                         ),
                                       ],
@@ -202,17 +197,56 @@ class _UserHomeState extends State<UserHome> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-
                             GestureDetector(
-                              child:
-                              Column(
+                              child: Column(
                                 children: [
-                                  _isListening? const Icon(
-                                    Icons.mic,
-                                    size: 30,
-                                    color: Colors.red,
-                                  ):Icon(
-                                    Icons.mic,
+                                  _isListening
+                                      ? const Icon(
+                                          Icons.mic,
+                                          size: 30,
+                                          color: Colors.red,
+                                        )
+                                      : Icon(
+                                          Icons.mic,
+                                          size: 30,
+                                          color: Colors.blue[700],
+                                        ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    'transcribe'.tr(),
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
+                                  )
+                                ],
+                              ),
+                              onTapDown: (_) {
+                                if (context.locale.languageCode == "ar") {
+                                  _listen();
+                                } else if (context.locale.languageCode ==
+                                    "fr") {
+                                  _listenFr();
+                                }
+                              },
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  isTransalated = true;
+                                });
+
+                                String? translatedData = searchMap(
+                                    _controller.text.toString(),
+                                    context.locale.languageCode.toString());
+                                _controller2.text = "";
+                                _controller2.text = translatedData??'';
+                              },
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.search,
                                     size: 30,
                                     color: Colors.blue[700],
                                   ),
@@ -227,114 +261,7 @@ class _UserHomeState extends State<UserHome> {
                                   )
                                 ],
                               ),
-                              onTapDown: (_) {
-
-                                if(context.locale.languageCode=="ar")
-                                {
-                                  _listen();
-
-                                }
-
-                                else if(context.locale.languageCode=="fr")
-                                {
-                                  _listenFr();
-
-                                }
-                              },
                             ),
-
-                            InkWell(
-                              onTap: () async
-                              {
-                                if(context.locale.languageCode=="ar")
-                                {
-
-                                  String inputText= _controller.text.toString().trim();
-                                  final List l = inputText.split(' ');
-                                  if(l.length==1)
-                                  {
-                                    setState(() {
-                                      isTransalated=true;
-                                    });
-
-                                 //   var result = await fetchFrenchWord(_controller.text.toString());
-                                    //_controller.text="";
-                                   // _controller2.text=result.arabic_word.toString();
-
-                                  }
-                                  else
-                                  {
-                                    setState(() {
-                                      isTransalated=true;
-                                    });
-                                    print("Length");
-                                    print(l.length);
-                                    print("Searching Sentence");
-                                  //  var result = await fetchFrenchSentence(_controller.text.toString());
-                                    //_controller.text="";
-                                  //  _controller2.text=result.fr_word.toString();
-                                  }
-
-                                }
-
-                                else if(context.locale.languageCode=="fr")
-                                {
-                                  String inputText= _controller.text.toString().trim();
-                                  final List l = inputText.split(' ');
-                                  if(l.length==1)
-                                  {
-                                    setState(() {
-                                      isTransalated=true;
-                                    });
-                                    print("Length");
-                                    print(l.length);
-                                    print("Searching Word");
-                                    // this is word
-                                    // request word translation API FR input french AR
-                                 //   var result = await fetchArabicWord(_controller.text.toString());
-                                    //_controller2.text="";
-                                 //   _controller2.text=result.fr_word.toString();
-
-                                  }
-                                  else
-                                  {
-                                    setState(() {
-                                      isTransalated=true;
-                                    });
-                                    print("Length");
-                                    print(l.length);
-                                    print("Searching Sentnce");
-                                    // else its sentce
-                                    // request Snetnce translation Api
-                                    //var result = await fetchArabicSentence(_controller.text.toString());
-                                    //_controller.text="";
-                                    //_controller2.text=result.arabic_word.toString();
-
-                                  }
-                                }
-                              },
-                              child: Container(
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.search,
-                                      size: 30,
-                                      color: Colors.blue[700],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'transcribe'.tr(),
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-
                           ],
                         )
                       ],
@@ -344,110 +271,109 @@ class _UserHomeState extends State<UserHome> {
               ),
             ),
 
+            isTransalated
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 2.6,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              6.5,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      child: TextFormField(
+                                        style: const TextStyle(fontSize: 28),
+                                        controller: _controller2,
+                                        textAlignVertical:
+                                            TextAlignVertical.center,
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: 5,
+                                        minLines: 1,
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          //  hintText: 'tapHere'.tr(),
+                                          hintStyle: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.w600),
+                                          suffixIcon: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.volume_up,
+                                                  color: Colors.white,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _isListening = false;
+                                                  });
+                                                  if (context.locale
+                                                          .languageCode ==
+                                                      "ar") {
+                                                    String val = _controller2
+                                                        .text
+                                                        .toString();
+                                                    speakOutFrench(
+                                                        val, flutterTts);
+                                                  } else if (context.locale
+                                                          .languageCode ==
+                                                      "fr") {
+                                                    String val2 = _controller2
+                                                        .text
+                                                        .toString();
 
-
-            isTransalated? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 2.6,
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: const Offset(0, 3), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-
-                    Column(
-                      children: [
-                        Row(
-                          // Camera Conversation
-                          children: [
-                            Expanded(
-                              child:
-                              /*Container(
-                                  height: MediaQuery.of(context).size.height / 6.5,
-                                  margin: EdgeInsets.symmetric(horizontal: 10),
-                                  child:Text();
-                                ), */
-                              Container(
-                                height: MediaQuery.of(context).size.height / 6.5,
-                                margin: const EdgeInsets.symmetric(horizontal: 10),
-                                child: TextFormField(
-                                  style: const TextStyle(fontSize: 28),
-                                  controller: _controller2,
-                                  textAlignVertical: TextAlignVertical.center,
-                                  keyboardType: TextInputType.multiline,
-                                  maxLines: 5,
-                                  minLines: 1,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    //  hintText: 'tapHere'.tr(),
-                                    hintStyle: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.w600),
-                                    suffixIcon: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-
-                                        IconButton(
-                                          icon: const Icon(
-                                            Icons.volume_up,
-                                            color: Colors.white,
+                                                    speakOutArabic(
+                                                        val2, flutterTts);
+                                                  }
+                                                },
+                                              ),
+                                            ],
                                           ),
-                                          onPressed: () {
-                                            setState(() {
-                                              _isListening=false;
-                                            });
-                                            if(context.locale.languageCode=="ar")
-                                            {
-
-                                              String val = _controller2.text.toString();
-                                              speakOutFrench(val, flutterTts);
-
-                                            }
-                                            else if(context.locale.languageCode=="fr")
-                                            {
-                                              String val2 = _controller2.text.toString();
-
-                                              speakOutArabic(val2, flutterTts);
-                                            }
-                                          },
+                                          contentPadding:
+                                              const EdgeInsets.all(5),
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                    contentPadding: const EdgeInsets.all(5),
                                   ),
-                                ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ):Container(),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                : Container(),
             //  Middle Card
-
           ],
         ),
       ),
-
     );
   }
 
   void _listen() async {
-
     if (!_isListening) {
       bool available = await _speech.initialize(
         onStatus: (val) => print('onStatus: $val'),
@@ -456,7 +382,7 @@ class _UserHomeState extends State<UserHome> {
       if (available) {
         setState(() => _isListening = true);
         _speech.listen(
-          localeId:'ar',
+          localeId: 'ar',
           onResult: (val) => setState(() {
             _controller.text = val.recognizedWords;
             if (val.hasConfidenceRating && val.confidence > 0) {
@@ -472,7 +398,6 @@ class _UserHomeState extends State<UserHome> {
   }
 
   void _listenFr() async {
-
     if (!_isListening) {
       bool available = await _speech.initialize(
         onStatus: (val) => print('onStatus: $val'),
@@ -481,9 +406,8 @@ class _UserHomeState extends State<UserHome> {
       if (available) {
         setState(() => _isListening = true);
         _speech.listen(
-          localeId:firstLanguage.code,
+          localeId: firstLanguage.code,
           onResult: (val) => setState(() {
-
             _controller.text = val.recognizedWords;
             if (val.hasConfidenceRating && val.confidence > 0) {
               //_confidence = val.confidence;

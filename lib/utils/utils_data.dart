@@ -48,3 +48,51 @@ Future speakOutArabic(String arWord, FlutterTts flutterTts) async
 }
 
 
+Map<String, String> arabicToFrenchData = {
+  'مرحبا': 'importun',
+  'غير مرحب به': 'il est le bienvenu',
+};
+
+Map<String, String> frenchToArabicData = {
+  'importun':'مرحبا',
+  'il est le bienvenu':'غير مرحب به',
+  'Salut':'الوداع',
+};
+
+Map<String, String> mix = {
+  'importun':'مرحبا',
+  'il est le bienvenu':'غير مرحب به',
+  'Salut':'الوداع',
+  'مرحبا': 'importun',
+  'غير مرحب به': 'il est le bienvenu',
+};
+
+
+
+String? searchMap(String query,String languageCode ) {
+
+  if (languageCode == "ar") {
+    final List<String> arabicMatchingKey = arabicToFrenchData.keys
+        .where((key) => key.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+    if (arabicMatchingKey.isNotEmpty) {
+      final String firstMatchingKey = arabicMatchingKey.first;
+      return arabicToFrenchData[firstMatchingKey];
+    } else {
+      return 'No matching value found';
+    }
+  }
+  else if(languageCode == "fr") {
+    final List<String> frenchMatchingKeys = frenchToArabicData.keys
+        .where((key) => key.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    if (frenchMatchingKeys.isNotEmpty) {
+      final String firstMatchingKey = frenchMatchingKeys.first;
+      return frenchToArabicData[firstMatchingKey];
+    } else {
+      return 'No matching value found';
+    }
+  }
+}
+
