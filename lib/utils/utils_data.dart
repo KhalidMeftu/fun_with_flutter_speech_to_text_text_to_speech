@@ -69,7 +69,7 @@ Map<String, String> mix = {
 
 
 
-String? searchMap(String query,String languageCode ) {
+String? searchOppositeTranslation(String query,String languageCode ) {
 
   if (languageCode == "ar") {
     final List<String> arabicMatchingKey = arabicToFrenchData.keys

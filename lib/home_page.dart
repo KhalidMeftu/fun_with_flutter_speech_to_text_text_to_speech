@@ -33,10 +33,9 @@ class _UserHomeState extends State<UserHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:AppBar(),
+      appBar: AppBar(),
       body: SingleChildScrollView(
-        child:
-        Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -224,10 +223,10 @@ class _UserHomeState extends State<UserHome> {
                               ),
                               onTapDown: (_) {
                                 if (context.locale.languageCode == "ar") {
-                                  _listen();
+                                  _listenToArabic();
                                 } else if (context.locale.languageCode ==
                                     "fr") {
-                                  _listenFr();
+                                  _listenToFrench();
                                 }
                               },
                             ),
@@ -237,11 +236,11 @@ class _UserHomeState extends State<UserHome> {
                                   isTransalated = true;
                                 });
 
-                                String? translatedData = searchMap(
+                                String? translatedData = searchOppositeTranslation(
                                     _controller.text.toString(),
                                     context.locale.languageCode.toString());
                                 _controller2.text = "";
-                                _controller2.text = translatedData??'';
+                                _controller2.text = translatedData ?? '';
                               },
                               child: Column(
                                 children: [
@@ -278,7 +277,7 @@ class _UserHomeState extends State<UserHome> {
                       height: MediaQuery.of(context).size.height / 2.6,
                       decoration: BoxDecoration(
                         color: Colors.blue,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderRadius: const BorderRadius.all(Radius.circular(10)),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.3),
@@ -373,7 +372,7 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 
-  void _listen() async {
+  void _listenToArabic() async {
     if (!_isListening) {
       bool available = await _speech.initialize(
         onStatus: (val) => print('onStatus: $val'),
@@ -397,7 +396,7 @@ class _UserHomeState extends State<UserHome> {
     }
   }
 
-  void _listenFr() async {
+  void _listenToFrench() async {
     if (!_isListening) {
       bool available = await _speech.initialize(
         onStatus: (val) => print('onStatus: $val'),
