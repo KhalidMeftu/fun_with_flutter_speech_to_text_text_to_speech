@@ -1,22 +1,21 @@
 import 'package:flutter_spech_recognition/model/language_entity.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-List<String> _languageFrom = [
+List<String> languageFrom = [
   'Arabic',
   'French',
 ];
-List<String> _languageTo = [
+List<String> languageTo = [
   'French',
   'Arabic',
 ];
 
-Language _firstLanguage = Language('fr', 'French');
-Language _secondLanguage = Language('ar', 'Arabic');
-final FlutterTts flutterTts= FlutterTts();
+Language firstLanguage = Language('fr', 'French');
+Language secondLanguage = Language('ar', 'Arabic');
 
 
 /// user speaks french word
-Future speakInputFrenchWord(String frenchWord) async
+Future speakInputFrenchWord(String frenchWord, FlutterTts flutterTts) async
 {
   await flutterTts.setLanguage("fr-FR");
   await flutterTts.setPitch(1);
@@ -24,7 +23,7 @@ Future speakInputFrenchWord(String frenchWord) async
 }
 
 /// user speacking arabic word
-Future speakInputArabicWord(String arWord) async
+Future speakInputArabicWord(String arWord, FlutterTts flutterTts) async
 {
   await flutterTts.setLanguage("ar");
   await flutterTts.setPitch(1);
@@ -33,7 +32,7 @@ Future speakInputArabicWord(String arWord) async
 
 
 /// app will out put in french
-Future speakOutFrench(String frenchWord) async
+Future speakOutFrench(String frenchWord, FlutterTts flutterTts) async
 {
   await flutterTts.setLanguage("fr-FR");
   await flutterTts.setPitch(1);
@@ -41,9 +40,11 @@ Future speakOutFrench(String frenchWord) async
 }
 
 /// app will speack out arabic
-Future speakOutArabic(String arWord) async
+Future speakOutArabic(String arWord, FlutterTts flutterTts) async
 {
   await flutterTts.setLanguage("ar");
   await flutterTts.setPitch(1);
   await flutterTts.speak(arWord);
 }
+
+
